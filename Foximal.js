@@ -1,3 +1,9 @@
+/*
+    Foximal.js
+    Javascript library by whatthefoxsay0
+    for big numbers
+*/
+
 class Foximal {
     m = 0
     e = -Infinity
