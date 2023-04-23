@@ -567,8 +567,6 @@ class Foximal {
 var FoximalE = new Foximal(Math.E)
 var FoximalPI = new Foximal(Math.PI)
 var Foximal10 = new Foximal(10)
-var DoubleMaxM = DoubleMaxM
-var DoubleMaxE = 308
 var FoximalDoubleMax = new Foximal(Number.MAX_VALUE)
 Foximal.add = function(n1, n2) {
     return new Foximal(n1).add(n2)
@@ -664,7 +662,7 @@ Foximal.isint = function(n1) {
     return new Foximal(n1).isint()
 }
 Foximal.isNaN = function(n1) {
-    return new Foximal(n1).isint()
+    return new Foximal(n1).isNaN()
 }
 Foximal.isneg = function(n1) {
     return new Foximal(n1).isneg()
