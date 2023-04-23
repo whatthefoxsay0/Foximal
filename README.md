@@ -1,7 +1,9 @@
 # Foximal
 A Javascript library for big Numbers.
 
-This Javascript library is inspired from ExpantaNum by Naruyoko: https://github.com/Naruyoko/ExpantaNum.js
+This Javascript library is inspired from bignum librarys like:
+* [break_eternity.js](https://github.com/Patashu/break_eternity.js) by Patashu - 10^^1.8e308
+* [ExpantaNum.js](https://github.com/Naruyoko/ExpantaNum.js) by Naruyoko - {10,9e15,1,2}
 
 But it is made differently by using recursion on the exponent. 
 thus the max value is theoretically only limited by the max Callstack size of your Browser, 
