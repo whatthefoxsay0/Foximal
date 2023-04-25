@@ -4,12 +4,12 @@
     for big numbers
 */
 
-class Foximal {
+class F {
     m = 0
     e = -Infinity
     sign = 1
     constructor (input) {
-        if (input instanceof Foximal) {
+        if (input instanceof F) {
             this.fromFoximal(input)
         } else if (typeof input == "number") {
             this.fromNumber(input)
@@ -63,12 +63,12 @@ class Foximal {
                         return this
                     }
                     if (parseFloat(values[2])>=10)
-                        this.e = Foximal10.pow(parseFloat(values[2])).mul(this.e)
+                        this.e = F10.pow(parseFloat(values[2])).mul(this.e)
                     else
                         this.e *= (10**parseFloat(values[2]))*this.e
                 }
             } else {
-                this.e = new Foximal(value.slice(values[0].length+1))
+                this.e = new F(value.slice(values[0].length+1))
             }
         } else {
             if (/[^0-9^.]/.test(value)) {
@@ -90,9 +90,9 @@ class Foximal {
     }
 
     add = function(other) {
-        let r = new Foximal(other)
+        let r = new F(other)
         if (r.m == 0) 
-            return new Foximal(this)
+            return new F(this)
         if (this.m == 0)
             return r
         let te = 0
@@ -101,11 +101,11 @@ class Foximal {
         let re = 0
         if (r.m)
             re = r.e
-        if (re instanceof Foximal) te = new Foximal(this.e)
-        else if (te instanceof Foximal) re = new Foximal(re)
-        if (te instanceof Foximal) {
+        if (re instanceof F) te = new F(this.e)
+        else if (te instanceof F) re = new F(re)
+        if (te instanceof F) {
             if (te.gt(re)) {
-                if (te.sub(re).powbase(10).lt(FoximalDoubleMax)) {
+                if (te.sub(re).powbase(10).lt(FDoubleMax)) {
                     r.m /= te.sub(re).powbase(10).toNumber()
                     r.m += this.sign*r.sign*this.m
                     r.e = te
@@ -113,7 +113,7 @@ class Foximal {
                     r.fromFoximal(this)
                 }
             } else if (re.gt(te)) {
-                if (re.sub(te).powbase(10).lt(FoximalDoubleMax)) {
+                if (re.sub(te).powbase(10).lt(FDoubleMax)) {
                     r.m += this.sign*r.sign*this.m/re.sub(te).powbase(10).toNumber()
                 }
             } else {
@@ -131,36 +131,36 @@ class Foximal {
     }
 
     sub = function(other) {
-        if (!(other instanceof Foximal)) other = new Foximal(other)
+        if (!(other instanceof F)) other = new F(other)
         return this.add(other.neg())
     }
 
     mul = function(other) {
-        let r = new Foximal(other)
+        let r = new F(other)
         if (this.m == 0 || r.m == 0)
-            return new Foximal()
+            return new F()
         r.m *= this.m
-        r.e = new Foximal(r.e)
+        r.e = new F(r.e)
         r.e = r.e.add(this.e)
         return r._fix()
     }
 
     div = function(other) {
-        let r = new Foximal(other)
+        let r = new F(other)
         r.m = this.m / r.m
-        r.e = new Foximal(r.e)
+        r.e = new F(r.e)
         r.e = r.e.neg().add(this.e)
         return r._fix()
     }
 
     lt = function(other) {
-        if (!(other instanceof Foximal)) other = new Foximal(other)
+        if (!(other instanceof F)) other = new F(other)
         if (this.sign > other.sign) return 0
         if (this.sign < other.sign) return 1
         let te = this.e
-        if (te instanceof Foximal) other.e = new Foximal(other.e)
-        else if (other.e instanceof Foximal) te = new Foximal(this.e)
-        if (te instanceof Foximal) {
+        if (te instanceof F) other.e = new F(other.e)
+        else if (other.e instanceof F) te = new F(this.e)
+        if (te instanceof F) {
             if (this.sign == 1) {
                 if (te.gt(other.e)) return 0
                 if (te.lt(other.e)) return 1
@@ -189,13 +189,13 @@ class Foximal {
     }
 
     lte = function(other) {
-        if (!(other instanceof Foximal)) other = new Foximal(other)
+        if (!(other instanceof F)) other = new F(other)
         if (this.sign > other.sign) return 0
         if (this.sign < other.sign) return 1
         let te = this.e
-        if (te instanceof Foximal) other.e = new Foximal(other.e)
-        else if (other.e instanceof Foximal) te = new Foximal(this.e)
-        if (te instanceof Foximal) {
+        if (te instanceof F) other.e = new F(other.e)
+        else if (other.e instanceof F) te = new F(this.e)
+        if (te instanceof F) {
             if (this.sign == 1) {
                 if (te.gt(other.e)) return 0
                 if (te.lt(other.e)) return 1
@@ -223,13 +223,13 @@ class Foximal {
     }
 
     gt = function(other) {
-        if (!(other instanceof Foximal)) other = new Foximal(other)
+        if (!(other instanceof F)) other = new F(other)
         if (this.sign > other.sign) return 1
         if (this.sign < other.sign) return 0
         let te = this.e
-        if (te instanceof Foximal) other.e = new Foximal(other.e)
-        else if (other.e instanceof Foximal) te = new Foximal(this.e)
-        if (te instanceof Foximal) {
+        if (te instanceof F) other.e = new F(other.e)
+        else if (other.e instanceof F) te = new F(this.e)
+        if (te instanceof F) {
             if (this.sign == 1) {
                 if (te.gt(other.e)) return 1
                 if (te.lt(other.e)) return 0
@@ -257,13 +257,13 @@ class Foximal {
     }
 
     gte = function(other) {
-        if (!(other instanceof Foximal)) other = new Foximal(other)
+        if (!(other instanceof F)) other = new F(other)
         if (this.sign > other.sign) return 1
         if (this.sign < other.sign) return 0
         let te = this.e
-        if (te instanceof Foximal) other.e = new Foximal(other.e)
-        else if (other.e instanceof Foximal) te = new Foximal(this.e)
-        if (te instanceof Foximal) {
+        if (te instanceof F) other.e = new F(other.e)
+        else if (other.e instanceof F) te = new F(this.e)
+        if (te instanceof F) {
             if (this.sign == 1) {
                 if (te.gt(other.e)) return 1
                 if (te.lt(other.e)) return 0
@@ -291,11 +291,11 @@ class Foximal {
     }
 
     eq = function(other) {
-        if (!(other instanceof Foximal)) other = new Foximal(other)
+        if (!(other instanceof F)) other = new F(other)
         let te = this.e
-        if (te instanceof Foximal) other.e = new Foximal(other.e)
-        else if (other.e instanceof Foximal) te = new Foximal(te)
-        if (te instanceof Foximal) {
+        if (te instanceof F) other.e = new F(other.e)
+        else if (other.e instanceof F) te = new F(te)
+        if (te instanceof F) {
             if (this.m == other.m && te.eq(other.e) && this.sign == other.sign)
                 return 1
         } else
@@ -309,7 +309,7 @@ class Foximal {
     }
 
     cmp = function(other) {
-        if (!(other instanceof Foximal)) other = new Foximal(other)
+        if (!(other instanceof F)) other = new F(other)
         if (this.gt(other)) return 1
         if (this.lt(other)) return -1
         return 0
@@ -317,57 +317,57 @@ class Foximal {
 
     log10 = function() {
         if (this.sign == 1)
-            if (this.e instanceof Foximal)
-                return new Foximal(this.e.add(Math.log10(this.m)))
+            if (this.e instanceof F)
+                return new F(this.e.add(Math.log10(this.m)))
             else
-                return new Foximal(this.e + Math.log10(this.m))
+                return new F(this.e + Math.log10(this.m))
         console.error("log of negative is not possible")
-        return new Foximal(0)
+        return new F(0)
     }
 
     ln = function() {
         if (this.sign == 1)
-        if (this.e instanceof Foximal)
-            return new Foximal(this.e.mul(Math.LN10).add(Math.log(this.M)))
+        if (this.e instanceof F)
+            return new F(this.e.mul(Math.LN10).add(Math.log(this.M)))
         else
-            return new Foximal(this.e*Math.LN10 + Math.log(this.m))
+            return new F(this.e*Math.LN10 + Math.log(this.m))
         console.error("log of negative is not possible")
-        return new Foximal(0)
+        return new F(0)
     }
 
     logbase = function(base) {
-        if (!(base instanceof Foximal)) base = new Foximal(base)
+        if (!(base instanceof F)) base = new F(base)
         if (this.sign == 1) {
             let te = this.e
-            if (base.e instanceof Foximal) te = new Foximal(te)
-            if (te instanceof Foximal)
-                return new Foximal(te.div(base.log10()).add(new Foximal(Math.log(this.m)).div(base.ln())))
+            if (base.e instanceof F) te = new F(te)
+            if (te instanceof F)
+                return new F(te.div(base.log10()).add(new F(Math.log(this.m)).div(base.ln())))
             else
-                return new Foximal(this.e/base.log10().toNumber() + Math.log(this.m)/base.ln().toNumber())
+                return new F(this.e/base.log10().toNumber() + Math.log(this.m)/base.ln().toNumber())
         }
         console.error("log of negative is not possible")
-        return new Foximal(0)
+        return new F(0)
     }
 
     pow = function(value) {
-        if (!(value instanceof Foximal)) value = new Foximal(value)
-        let te = new Foximal(this.e)
-        let r = new Foximal(1)
-        r.e = new Foximal(te.add(Math.log10(this.m)).mul(value))
+        if (!(value instanceof F)) value = new F(value)
+        let te = new F(this.e)
+        let r = new F(1)
+        r.e = new F(te.add(Math.log10(this.m)).mul(value))
         return r._fix()
     }
 
     powbase = function(base) {
-        return new Foximal(base).pow(this)
+        return new F(base).pow(this)
     }
 
     exp = function() {
-        return FoximalE.pow(this)
+        return FE.pow(this)
     }
 
     root = function(value) {
-        if (!(value instanceof Foximal)) value = new Foximal(value)
-        return this.pow(Foximal.div(1, value))
+        if (!(value instanceof F)) value = new F(value)
+        return this.pow(F.div(1, value))
     }
 
     sqrt = function() {
@@ -386,17 +386,17 @@ class Foximal {
     // Only positiv values
     fact = function() {
         if (this.gt(0))
-        return this.div(FoximalE).pow(this).mul(this.mul(2).add(1/3).mul(FoximalPI).sqrt())
-        return new Foximal()
+        return this.div(FE).pow(this).mul(this.mul(2).add(1/3).mul(FPI).sqrt())
+        return new F()
     }
 
     // Only positiv values above 1.5 are nearly accurate
     gamma = function() {
         if (this.gte(1.5))
-        return this.mul(2).sub(1).fact().mul(FoximalPI.sqrt()).div(this.sub(0.5).fact().mul(Foximal.pow(4, this.sub(0.5))))
+        return this.mul(2).sub(1).fact().mul(FPI.sqrt()).div(this.sub(0.5).fact().mul(F.pow(4, this.sub(0.5))))
         if (this.gte(1))
-        return new Foximal(1)
-        return new Foximal()
+        return new F(1)
+        return new F()
     }
 
     // very unprecise
@@ -405,13 +405,13 @@ class Foximal {
     }
 
     abs = function() {
-        let r = new Foximal(this)
+        let r = new F(this)
         r.sign = 1
         return r
     }
 
     neg = function() {
-        let r = new Foximal(this)
+        let r = new F(this)
         if (r.m != 0)
             r.sign *= -1
         return r
@@ -425,7 +425,7 @@ class Foximal {
     isNaN = function() {
         if (Number.isNaN(this.m) || (this.sign != 1 && this.sign != -1)) 
             return 1
-        if (this.e instanceof Foximal)
+        if (this.e instanceof F)
             return this.e.isNaN()
         if (Number.isNaN(this.e))
             return 1
@@ -434,7 +434,7 @@ class Foximal {
 
     isInfinite = function() {
         if ((Number.isInfinite(this.m)) && !this.isNaN()) return 1
-        if (this.e instanceof Foximal)
+        if (this.e instanceof F)
             return this.e.isInfinite()
         if (Number.isInfinite(this.e))
             return 1
@@ -457,24 +457,24 @@ class Foximal {
     }
 
     min = function(other) {
-        if (!(other instanceof Foximal)) other = new Foximal(other)
+        if (!(other instanceof F)) other = new F(other)
         if (this.lte(other)) return this
         return other
     }
 
     max = function(other) {
-        if (!(other instanceof Foximal)) other = new Foximal(other)
+        if (!(other instanceof F)) other = new F(other)
         if (this.gte(other)) return this
         return other
     }
 
     // Only for max 10 OOMs difference because of precision
     mod = function(value) {
-        if (!(value instanceof Foximal)) value = new Foximal(value)
+        if (!(value instanceof F)) value = new F(value)
         if (this.div(value).abs().gt(1e10) || this.div(value).abs().lt(1e-10))
-            return new Foximal()
+            return new F()
         let r = this.sub(this.div(value).floor().mul(value))
-        return (r.gte(value) || r.lt(0))? new Foximal() : r
+        return (r.gte(value) || r.lt(0))? new F() : r
     }
 
     // Only for max e10 because of precision
@@ -482,8 +482,8 @@ class Foximal {
         if (this.gt(1e10))
         return this
         if (this.sign == 1)
-        return new Foximal(Math.ceil(this.m * (10**this.e)))
-        return new Foximal(-Math.floor(this.m * (10**this.e)))
+        return new F(Math.ceil(this.m * (10**this.e)))
+        return new F(-Math.floor(this.m * (10**this.e)))
     }
 
     // Only for max e10 because of precision
@@ -491,8 +491,8 @@ class Foximal {
         if (this.gt(1e10))
         return this
         if (this.sign == 1)
-        return new Foximal(Math.floor(this.m * (10**this.e)))
-        return new Foximal(-Math.ceil(this.m * (10**this.e)))
+        return new F(Math.floor(this.m * (10**this.e)))
+        return new F(-Math.ceil(this.m * (10**this.e)))
     }
 
     // Only for max e14
@@ -503,9 +503,9 @@ class Foximal {
 
     // Only for max 1.79e308
     toNumber = function() {
-        if (this.lt(FoximalDoubleMax))
+        if (this.lt(FDoubleMax))
         return this.sign*this.m*10**(this.e)
-        console.error("Foximal.toNumber() only for max 1.79e308")
+        console.error("F.toNumber() only for max 1.79e308")
         return 0
     }
 
@@ -514,13 +514,13 @@ class Foximal {
             decimals += 1
 
         if (mantissa) {
-            if (this.e instanceof Foximal)
+            if (this.e instanceof F)
                 return (this.sign*this.m+"").slice(0,decimals+1)+"e"+this.e.toString(0, 0)
             if (this.e == 0)
                 return (this.sign*this.m+"").slice(0,decimals+1)
             return (this.sign*this.m+"").slice(0,decimals+1)+"e"+this.e
         } else {
-            if (this.e instanceof Foximal)
+            if (this.e instanceof F)
                 return "e"+this.e.toString(0, 0)
             return "e"+this.e
         } 
@@ -532,12 +532,12 @@ class Foximal {
     }
 
     _fix = function() {
-        if (this.m == 0) return new Foximal()
+        if (this.m == 0) return new F()
         if (this.m < 0) {
             this.sign *= -1
             this.m *= -1
         }
-        if (this.e instanceof Foximal) {
+        if (this.e instanceof F) {
             this.e._fix()
             if (this.e.m == 0) {
                 this.e = 0
@@ -554,7 +554,7 @@ class Foximal {
                 }
             }
         } 
-        if (!(this.e instanceof Foximal)) {
+        if (!(this.e instanceof F)) {
             if (this.e != Math.floor(this.e)) {
                 this.m *= 10**(this.e - Math.floor(this.e))
                 this.e = Math.floor(this.e)
@@ -563,143 +563,146 @@ class Foximal {
                 this.e += Math.floor(Math.log10(this.m))
                 this.m /= 10**(Math.floor(Math.log10(this.m)))
             }
-            if ((Foximal.abs(this.e).gt(1e10) || Foximal.abs(this.e).lt(1e-10)) && Foximal.abs(this.e).neq(0)) {
-                this.e = new Foximal(this.e)
+            if ((F.abs(this.e).gt(1e10) || F.abs(this.e).lt(1e-10)) && F.abs(this.e).neq(0)) {
+                this.e = new F(this.e)
             }
         }
         return this
     }
 }
-var FoximalE = new Foximal(Math.E)
-var FoximalPI = new Foximal(Math.PI)
-var Foximal10 = new Foximal(10)
-var FoximalDoubleMax = new Foximal(Number.MAX_VALUE)
-Foximal.add = function(n1, n2) {
-    return new Foximal(n1).add(n2)
+var FE = new F(Math.E)
+var FPI = new F(Math.PI)
+var F10 = new F(10)
+var FDoubleMax = new F(Number.MAX_VALUE)
+var Foximal = function(n1) {
+    return new F(n1)
 }
-Foximal.sub = function(n1, n2) {
-    return new Foximal(n1).sub(n2)
+Foximal.add = F.add = function(n1, n2) {
+    return new F(n1).add(n2)
 }
-Foximal.toNumber = function(n1) {
-    return new Foximal(n1).toNumber()
+Foximal.sub = F.sub = function(n1, n2) {
+    return new F(n1).sub(n2)
 }
-Foximal.mul = function(n1, n2) {
-    return new Foximal(n1).mul(n2)
+Foximal.toNumber = F.toNumber = function(n1) {
+    return new F(n1).toNumber()
 }
-Foximal.div = function(n1, div) {
-    return new Foximal(n1).div(div)
+Foximal.mul = F.mul = function(n1, n2) {
+    return new F(n1).mul(n2)
 }
-Foximal.lt = function(n1, n2) {
-    return new Foximal(n1).lt(n2)
+Foximal.div = F.div = function(n1, div) {
+    return new F(n1).div(div)
 }
-Foximal.lte = function(n1, n2) {
-    return new Foximal(n1).lte(n2)
+Foximal.lt = F.lt = function(n1, n2) {
+    return new F(n1).lt(n2)
 }
-Foximal.gt = function(n1, n2) {
-    return new Foximal(n1).gt(n2)
+Foximal.lte = F.lte = function(n1, n2) {
+    return new F(n1).lte(n2)
 }
-Foximal.gte = function(n1, n2) {
-    return new Foximal(n1).gte(n2)
+Foximal.gt = F.gt = function(n1, n2) {
+    return new F(n1).gt(n2)
 }
-Foximal.abs = function(n1) {
-    return new Foximal(n1).abs()
+Foximal.gte = F.gte = function(n1, n2) {
+    return new F(n1).gte(n2)
 }
-Foximal.neg = function(n1) {
-    return new Foximal(n1).neg()
+Foximal.abs = F.abs = function(n1) {
+    return new F(n1).abs()
 }
-Foximal.log10 = function(n1) {
-    return new Foximal(n1).log10()
+Foximal.neg = F.neg = function(n1) {
+    return new F(n1).neg()
 }
-Foximal.ln = function(n1) {
-    return new Foximal(n1).ln()
+Foximal.log10 = F.log10 = function(n1) {
+    return new F(n1).log10()
 }
-Foximal.logbase = function(n1, n2) {
-    return new Foximal(n1).logbase(n2)
+Foximal.ln = F.ln = function(n1) {
+    return new F(n1).ln()
 }
-Foximal.fromFoximal = function(value) {
-    return new Foximal().fromFoximal(value)
+Foximal.logbase = F.logbase = function(n1, n2) {
+    return new F(n1).logbase(n2)
 }
-Foximal.fromNumber = function(value) {
-    return new Foximal().fromNumber(value)
+Foximal.fromFoximal = F.fromFoximal = function(value) {
+    return new F().fromFoximal(value)
 }
-Foximal.fromString = function(value) {
-    return new Foximal().fromString(value)
+Foximal.fromNumber = F.fromNumber = function(value) {
+    return new F().fromNumber(value)
 }
-Foximal.ceil = function(value) {
-    return new Foximal(value).ceil()
+Foximal.fromString = F.fromString = function(value) {
+    return new F().fromString(value)
 }
-Foximal.floor = function(value) {
-    return new Foximal(value).floor()
+Foximal.ceil = F.ceil = function(value) {
+    return new F(value).ceil()
 }
-Foximal.cmp = function(n1, n2) {
-    return new Foximal(n1).cmp(n2)
+Foximal.floor = F.floor = function(value) {
+    return new F(value).floor()
 }
-Foximal.pow = function(n1, n2) {
-return new Foximal(n1).pow(n2)
+Foximal.cmp = F.cmp = function(n1, n2) {
+    return new F(n1).cmp(n2)
 }
-Foximal.root = function(n1, n2) {
-    return new Foximal(n1).root(n2)
+Foximal.pow = F.pow = function(n1, n2) {
+return new F(n1).pow(n2)
 }
-Foximal.sqrt = function(n1) {
-    return new Foximal(n1).sqrt()
+Foximal.root = F.root = function(n1, n2) {
+    return new F(n1).root(n2)
 }
-Foximal.cbrt = function(n1) {
-    return new Foximal(n1).cbrt()
+Foximal.sqrt = F.sqrt = function(n1) {
+    return new F(n1).sqrt()
 }
-Foximal.eq = function(n1, n2) {
-    return new Foximal(n1).eq(n2)
+Foximal.cbrt = F.cbrt = function(n1) {
+    return new F(n1).cbrt()
 }
-Foximal.exp = function(n1) {
-    return new Foximal(n1).exp()
+Foximal.eq = F.eq = function(n1, n2) {
+    return new F(n1).eq(n2)
 }
-Foximal.fact = function(n1) {
-    return new Foximal(n1).fact()
+Foximal.exp = F.exp = function(n1) {
+    return new F(n1).exp()
 }
-Foximal.gamma = function(n1) {
-    return new Foximal(n1).gamma()
+Foximal.fact = F.fact = function(n1) {
+    return new F(n1).fact()
 }
-Foximal.isFinite = function(n1) {
-    return new Foximal(n1).isFinite()
+Foximal.gamma = F.gamma = function(n1) {
+    return new F(n1).gamma()
 }
-Foximal.isInfinite = function(n1) {
-    return new Foximal(n1).isInfinite()
+Foximal.isFinite = F.isFinite = function(n1) {
+    return new F(n1).isFinite()
 }
-Foximal.isint = function(n1) {
-    return new Foximal(n1).isint()
+Foximal.isInfinite = F.isInfinite = function(n1) {
+    return new F(n1).isInfinite()
 }
-Foximal.isNaN = function(n1) {
-    return new Foximal(n1).isNaN()
+Foximal.isint = F.isint = function(n1) {
+    return new F(n1).isint()
 }
-Foximal.isneg = function(n1) {
-    return new Foximal(n1).isneg()
+Foximal.isNaN = F.isNaN = function(n1) {
+    return new F(n1).isNaN()
 }
-Foximal.ispos = function(n1) {
-    return new Foximal(n1).ispos()
+Foximal.isneg = F.isneg = function(n1) {
+    return new F(n1).isneg()
 }
-Foximal.lambertw = function(n1) {
-    return new Foximal(n1).lambertw()
+Foximal.ispos = F.ispos = function(n1) {
+    return new F(n1).ispos()
 }
-Foximal.mod = function(n1, n2) {
-    return new Foximal(n1).mod(n2)
+Foximal.lambertw = F.lambertw = function(n1) {
+    return new F(n1).lambertw()
 }
-Foximal.neq = function(n1, n2) {
-    return new Foximal(n1).neq(n2)
+Foximal.mod = F.mod = function(n1, n2) {
+    return new F(n1).mod(n2)
 }
-Foximal.min = function(n1, n2) {
-    return new Foximal(n1).min(n2)
+Foximal.neq = F.neq = function(n1, n2) {
+    return new F(n1).neq(n2)
 }
-Foximal.max = function(n1, n2) {
-    return new Foximal(n1).max(n2)
+Foximal.min = F.min = function(n1, n2) {
+    return new F(n1).min(n2)
 }
-Foximal.round = function(n1) {
-    return new Foximal(n1).round()
+Foximal.max = F.max = function(n1, n2) {
+    return new F(n1).max(n2)
 }
-Foximal.ssrt = function(n1) {
-    return new Foximal(n1).ssrt()
+Foximal.round = F.round = function(n1) {
+    return new F(n1).round()
 }
-Foximal.toString = function(n1, decimals=5) {
-    return new Foximal(n1).toString(decimals)
+Foximal.ssrt = F.ssrt = function(n1) {
+    return new F(n1).ssrt()
 }
-Foximal.toF = function(n1) {
-    return new Foximal(n1).toF()
+Foximal.toString = F.toString = function(n1, decimals=5) {
+    return new F(n1).toString(decimals)
+}
+Foximal.toF = F.toF = function(n1) {
+    return new F(n1).toF()
 }
