@@ -142,6 +142,7 @@ class F {
         r.m *= this.m
         r.e = new F(r.e)
         r.e = r.e.add(this.e)
+        r.sign *= this.sign
         return r._fix()
     }
 
@@ -150,6 +151,7 @@ class F {
         r.m = this.m / r.m
         r.e = new F(r.e)
         r.e = r.e.neg().add(this.e)
+        r.sign *= this.sign
         return r._fix()
     }
 
@@ -380,7 +382,10 @@ class F {
 
     // very unprecise
     ssrt = function() {
-        return this.ln().div(this.ln().lambertw())
+        if (this.gt(Math.pow(-1/Math.E)) && this.lt(1))
+            return this.ln().div(this.ln().lambertw())
+        console.error("for ssrt the value muss be between e^(-1/e) and 1")
+        return new F()
     }
 
     // Only positiv values
@@ -401,7 +406,10 @@ class F {
 
     // very unprecise
     lambertw = function() {
-        return this.ln().sub(this.ln().ln()).add(this.ln().ln().div(this.ln()))._fix()
+        if (this.gte(-1/Math.E))
+            return this.ln().sub(this.ln().ln()).add(this.ln().ln().div(this.ln()))._fix()
+        console.error("LambertW of values lower than -1/e ist not possible")
+        return new F()
     }
 
     abs = function() {
@@ -423,20 +431,23 @@ class F {
     }
 
     isNaN = function() {
-        if (Number.isNaN(this.m) || (this.sign != 1 && this.sign != -1)) 
+        if (isNaN(this.m) || (this.sign != 1 && this.sign != -1)) 
             return 1
         if (this.e instanceof F)
             return this.e.isNaN()
-        if (Number.isNaN(this.e))
+        if (isNaN(this.e))
             return 1
         return 0
     }
 
     isInfinite = function() {
-        if ((Number.isInfinite(this.m)) && !this.isNaN()) return 1
+        if (this.isNaN())
+            return 0
+        if (!isFinite(this.m)) 
+            return 1
         if (this.e instanceof F)
             return this.e.isInfinite()
-        if (Number.isInfinite(this.e))
+        if (!isFinite(this.e))
             return 1
         return 0
     }
@@ -473,7 +484,11 @@ class F {
         if (!(value instanceof F)) value = new F(value)
         if (this.div(value).abs().gt(1e10) || this.div(value).abs().lt(1e-10))
             return new F()
-        let r = this.sub(this.div(value).floor().mul(value))
+        let r = new F()
+        if (this.sign == 1)
+            r = this.sub(this.div(value).floor().mul(value))
+        else
+            r = this.sub(this.div(value).ceil().mul(value)).abs()
         return (r.gte(value) || r.lt(0))? new F() : r
     }
 
@@ -510,6 +525,8 @@ class F {
     }
 
     toString = function(decimals=5, mantissa=1) {
+        if (this.m == 0)
+            return "0"
         if (decimals)
             decimals += 1
 
